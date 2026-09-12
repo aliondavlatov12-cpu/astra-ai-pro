@@ -619,7 +619,10 @@ def start_bot():
     )
 
     logger.info("Бот омода аст. Telegram-ро кушо ва /start фирист.")
-    application.run_polling(drop_pending_updates=True)
+    application.run_polling(
+    drop_pending_updates=True,
+    close_loop=False
+    )
 
 
 def main():

@@ -32,11 +32,12 @@ GEMINI_KEY = os.getenv("GEMINI_API_KEY", "YOUR_GEMINI_API_KEY")
 MODELS = [
     "gemini-2.5-flash",
     "gemini-2.5-flash-lite",
-    "gemini-2.5-pro",
-    "gemini-flash-latest",
     "gemini-2.0-flash",
     "gemini-1.5-flash",
+    "gemini-2.5-pro",
+    "gemini-flash-latest",
 ]
+
 
 HISTORY_FILE = "astra_history.json"
 MAX_HISTORY = 100

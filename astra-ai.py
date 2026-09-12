@@ -3,7 +3,7 @@
 Astra AI Pro — Telegram bot
 Gemini + File builder + History + Fallback
 """
-
+import asyncio
 import os
 import io
 import csv
@@ -177,28 +177,43 @@ def call_gemini_once(model, messages, image_data=None, file_text=None):
     return parts[0].get("text", ""), None
 
 
-def call_gemini(messages, image_data=None, file_text=None):
+def main():
+    if not BOT_TOKEN or BOT_TOKEN == "YOUR_BOT_TOKEN":
+        print("❌ ASTRA_BOT_TOKEN гузор.")
+        return
     if not GEMINI_KEY or GEMINI_KEY == "YOUR_GEMINI_API_KEY":
-        return "❌ GEMINI_API_KEY дар environment гузошта нашудааст."
+        print("❌ GEMINI_API_KEY гузор.")
+        return
 
-    last_err = None
-    for model in MODELS:
-        try:
-            text, err = call_gemini_once(model, messages, image_data, file_text)
-            if text:
-                logger.info(f"Ҷавоб аз {model}")
-                return text
-            last_err = err
-            logger.warning(f"{model} кор накард: {err}")
-        except Exception as e:
-            last_err = str(e)
-            logger.warning(f"{model} exception: {e}")
-            continue
+    # Event loop нав барои thread-и асосӣ — барои Render
+    try:
+        asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
 
-    if last_err == "SAFETY":
-        return "⚠️ Модел ин саволро блок кард. Саволро дигар хел нависед."
-    return f"❌ Ҳамаи моделҳо кор накарданд.\nОхирин хато: {last_err}"
+    print("🚀 Astra AI Pro started")
+    print("🤖 Сохтаи ALIJON IT")
+    print(f"Моделҳо: {', '.join(MODELS)}")
 
+    app = Application.builder().token(BOT_TOKEN).build()
+
+    app.add_handler(CommandHandler("start", cmd_start))
+    app.add_handler(CommandHandler("help", cmd_help))
+    app.add_handler(CommandHandler("clear", cmd_clear))
+    app.add_handler(CommandHandler("pdf", cmd_pdf))
+    app.add_handler(CommandHandler("txt", cmd_txt))
+    app.add_handler(CommandHandler("csv", cmd_csv))
+    app.add_handler(CommandHandler("zip", cmd_zip))
+
+    app.add_handler(MessageHandler(
+        filters.TEXT | filters.PHOTO | filters.Document.ALL |
+        filters.VIDEO | filters.VOICE | filters.AUDIO,
+        handle_message
+    ))
+
+    print("Бот омода. Telegram-ро кушо ва /start фирист.")
+    app.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
 
 # ============ ФАЙЛҲО ============
 def download_telegram_file(file_id):

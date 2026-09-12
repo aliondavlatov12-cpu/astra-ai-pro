@@ -630,11 +630,12 @@ def main():
     logger.info("🚀 Astra AI Pro started")
     logger.info("🤖 Сохтаи Alijon IT")
 
-    # Web server дар thread алоҳида — барои Render
+    # Web server дар thread-и алоҳида
     web_thread = threading.Thread(target=run_web, daemon=True)
     web_thread.start()
+    logger.info("Web server started")
 
-    # Бот дар thread асосӣ
+    # Бот дар thread-и асосӣ — run_polling
     start_bot()
 
 

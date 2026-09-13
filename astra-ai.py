@@ -4,6 +4,7 @@ Astra Telegram Bot — Pydroid 3
 Матн, расм, файл, PDF, CSV, ZIP, видео, овоз
 """
 
+import asyncio
 import os
 import io
 import csv
@@ -492,11 +493,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # ============ MAIN ============
-def main():
+async def main():
     print("🚀 Astra бот оғоз шуд...")
     print(f"Моделҳо: {', '.join(MODELS)}")
     print("Дар Telegram ботро кушо ва /start нависед.")
-    print("Барои қатъ — Ctrl+C ё тугмаи ■")
+
+    if not BOT_TOKEN:
+        raise RuntimeError("BOT_TOKEN дар Render Environment Variables нест")
+
+    if not GEMINI_KEY:
+        raise RuntimeError("GEMINI_KEY дар Render Environment Variables нест")
 
     app = Application.builder().token(BOT_TOKEN).build()
 
@@ -514,8 +520,20 @@ def main():
         handle_message
     ))
 
-    app.run_polling(allowed_updates=Update.ALL_TYPES, drop_pending_updates=True)
+    await app.initialize()
+    await app.start()
+    await app.updater.start_polling(
+        allowed_updates=Update.ALL_TYPES,
+        drop_pending_updates=True
+    )
+
+    try:
+        await asyncio.Event().wait()
+    finally:
+        await app.updater.stop()
+        await app.stop()
+        await app.shutdown()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

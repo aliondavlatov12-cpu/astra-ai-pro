@@ -1,7 +1,5 @@
-python-telegram-bot==21.6
+python-telegram-bot==21.7
 requests
+Pillow
 reportlab
 python-docx
-pillow
-flask
-gunicorn

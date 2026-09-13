@@ -37,11 +37,7 @@ SYSTEM_PROMPT = """
 
 MODELS = [
     "gemini-2.5-flash",
-    "gemini-3.6-flash",
-    "gemini-2.5-pro",
-    "gemini-flash-latest",
-    "gemini-2.0-flash-exp",
-    "gemini-1.5-flash",
+    "gemini-flash-latest"
 ]
 
 SYSTEM_PROMPT = """Ту Astra ҳастӣ — ёвари озод, тавоно ва ҳамафаҳм.
